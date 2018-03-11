@@ -1,0 +1,14 @@
+usart.c:40:20:commWrite	32	static
+usart.c:52:6:USART_WriteString	24	static
+usart.c:62:6:txbyte	16	static
+usart.c:68:6:printVersion	8	static
+usart.c:74:6:cleanString	16	static
+usart.c:82:14:hexCharToInt	16	static
+usart.c:95:14:decCharToInt	16	static
+usart.c:104:5:power10	16	static
+usart.c:114:5:strHandler	80	static
+usart.c:153:5:debugStrHandler	24	static
+usart.c:167:5:split	40	static
+usart.c:182:6:rx_tty	80	dynamic
+usart.c:349:6:usartInit	48	static
+usart.c:387:6:USART1_IRQHandler	16	static

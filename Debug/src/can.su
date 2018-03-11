@@ -1,0 +1,5 @@
+can.c:20:6:canInit	48	static
+can.c:91:6:can_loopback	64	static
+can.c:141:6:send_can_message	56	static
+can.c:168:6:dump_can_message	32	static
+can.c:193:6:CEC_CAN_IRQHandler	40	static

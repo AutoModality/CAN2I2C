@@ -1,0 +1,135 @@
+/**
+*****************************************************************************
+**
+**  PROJECT      : CAN2UART
+**
+**  AUTHOR		 : Daniel Wahl + Florian Dederichs
+**
+**  Environment  : Atollic TrueSTUDIO(R)
+**
+**  COPYRIGHT(C) : 2017 Auvidea GmbH
+**
+*****************************************************************************
+**/
+
+
+
+#include "rcc.h"
+#include "usart.h"
+#include "i2c.h"
+#include "can.h"
+
+uint16_t flashspeed, ledflash, flsdelay;
+
+uint8_t canmode = 1;					//canmode = 0 loopback 			canmode >= 1 normal
+
+int ncount = 0;
+int dcount = 0;
+
+
+int main(void) {
+	rccConfiguration();
+	DelayMil(10);
+	//DelaySec(30);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
+					// before J130 starts.
+	usartInit();
+	i2cInit();
+	canInit();
+    chipReset();
+	flsdelay = 2000;
+	flashspeed = 1500;
+	ledflash = 1;
+
+	USART_WriteString(">");
+
+	bbInit();
+	DelaySec(1);
+	i2cInit();
+	DelaySec(1);
+
+	uint8_t tx_values[256];
+	tx_values[0] = 'o';
+	I2C_WrReg(0x09, 0x00, tx_values, 1);
+	DelaySec(5);
+	tx_values[0] = 'n';
+	tx_values[1] = 0x00;
+	tx_values[2] = 0x00;
+	tx_values[3] = 0x00;
+	I2C_WrReg(0x09, 0x00, tx_values, 4);
+	DelaySec(5);
+	tx_values[0] = 'n';
+	tx_values[1] = 0xff;
+	tx_values[2] = 0x00;
+	tx_values[3] = 0x00;
+	I2C_WrReg(0x09, 0x00, tx_values, 4);
+	DelaySec(5);
+//	tx_values[0] = 'n';
+//	tx_values[1] = 0x00;
+//	tx_values[2] = 0xff;
+//	tx_values[3] = 0x00;
+//	I2C_WrReg(0x09, 0x00, tx_values, 4);
+//	DelaySec(5);
+//	tx_values[0] = 'n';
+//	tx_values[1] = 0x00;
+//	tx_values[2] = 0x00;
+//	tx_values[3] = 0xff;
+//	I2C_WrReg(0x09, 0x00, tx_values, 4);
+//	DelaySec(5);
+	tx_values[0] = 'n';
+	tx_values[1] = 0x00;
+	tx_values[2] = 0x00;
+	tx_values[3] = 0x00;
+	I2C_WrReg(0x09, 0x00, tx_values, 4);
+	DelaySec(5);
+
+	while (1) {
+
+		int i;
+		if(ledflash == 1){
+			if(ncount != flashspeed){
+				GPIO_SetBits(GPIOB, GPIO_Pin_5);
+				ncount++;
+			}
+			if(ncount == flashspeed){
+					dcount++;
+					GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+			}
+			if(dcount == flsdelay){
+				ncount = 0;
+				dcount = 0;
+				}
+
+		}
+		else if(ledflash == 0){
+			ncount = 0;
+			dcount = 0;
+		}
+
+//		GPIO_ResetBits(GPIOA, GPIO_Pin_8);
+//		for(i=0;i<100;i++) {
+//			if(i==10)
+//			GPIO_SetBits(GPIOA, GPIO_Pin_8);
+//			rx_tty();
+//			if((canmode < 1) && (i==99)) {
+//				can_loopback();
+//			}
+//		}
+
+		uint8_t id = 1;
+		uint8_t dlc = 8;
+		uint8_t data[8];
+		data[0] = 0;
+		data[1] = 1;
+		data[2] = 2;
+		data[3] = 3;
+		data[4] = 4;
+		data[5] = 5;
+		data[6] = 6;
+		data[7] = 7;
+		send_can_message(id, dlc, data);
+
+		dump_can_message();
+	}
+	return 0;
+
+}
