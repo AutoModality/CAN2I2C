@@ -29,8 +29,8 @@ int dcount = 0;
 int main(void)
 {
 	rccConfiguration();
-	DelayMil(10);
-	//DelaySec(30);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
+	//DelayMil(10);
+	DelaySec(30);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
 					// before J130 starts.
 
 	i2cInit();

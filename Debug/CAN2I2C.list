@@ -21,23 +21,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
   8 .ARM.attributes 00000028  00000000  00000000  00020014  2**0
                   CONTENTS, READONLY
-  9 .debug_info   000085df  00000000  00000000  0002003c  2**0
+  9 .debug_info   000085ef  00000000  00000000  0002003c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_abbrev 00001739  00000000  00000000  0002861b  2**0
+ 10 .debug_abbrev 00001739  00000000  00000000  0002862b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_aranges 00000838  00000000  00000000  00029d58  2**3
+ 11 .debug_aranges 00000838  00000000  00000000  00029d68  2**3
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000760  00000000  00000000  0002a590  2**3
+ 12 .debug_ranges 00000760  00000000  00000000  0002a5a0  2**3
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_line   00003187  00000000  00000000  0002acf0  2**0
+ 13 .debug_line   00003187  00000000  00000000  0002ad00  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_str    0000285d  00000000  00000000  0002de77  2**0
+ 14 .debug_str    00002873  00000000  00000000  0002de87  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .comment      0000007c  00000000  00000000  000306d4  2**0
+ 15 .comment      0000007c  00000000  00000000  000306fa  2**0
                   CONTENTS, READONLY
- 16 .debug_frame  00001de0  00000000  00000000  00030750  2**2
+ 16 .debug_frame  00001de0  00000000  00000000  00030778  2**2
                   CONTENTS, READONLY, DEBUGGING
- 17 .stabstr      0000003f  00000000  00000000  00032530  2**0
+ 17 .stabstr      0000003f  00000000  00000000  00032558  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -4926,72 +4926,72 @@ void canInit(void) {
 void CEC_CAN_IRQHandler(void)
 {
  8002018:	b580      	push	{r7, lr}
- 800201a:	b088      	sub	sp, #32
+ 800201a:	b08e      	sub	sp, #56	; 0x38
  800201c:	af00      	add	r7, sp, #0
-	CanRxMsg RxMessage;
+	CanRxMsg can_rx_msg;
 	uint8_t i = 0;
- 800201e:	231f      	movs	r3, #31
+ 800201e:	2337      	movs	r3, #55	; 0x37
  8002020:	18fb      	adds	r3, r7, r3
  8002022:	2200      	movs	r2, #0
  8002024:	701a      	strb	r2, [r3, #0]
 
-	RxMessage.StdId = 0x00;
- 8002026:	2308      	movs	r3, #8
+	can_rx_msg.StdId = 0x00;
+ 8002026:	2320      	movs	r3, #32
  8002028:	18fb      	adds	r3, r7, r3
  800202a:	2200      	movs	r2, #0
  800202c:	601a      	str	r2, [r3, #0]
-	RxMessage.IDE = CAN_ID_STD;
- 800202e:	2308      	movs	r3, #8
+	can_rx_msg.IDE = CAN_ID_STD;
+ 800202e:	2320      	movs	r3, #32
  8002030:	18fb      	adds	r3, r7, r3
  8002032:	2200      	movs	r2, #0
  8002034:	721a      	strb	r2, [r3, #8]
-	RxMessage.DLC = 0;
- 8002036:	2308      	movs	r3, #8
+	can_rx_msg.DLC = 0;
+ 8002036:	2320      	movs	r3, #32
  8002038:	18fb      	adds	r3, r7, r3
  800203a:	2200      	movs	r2, #0
  800203c:	729a      	strb	r2, [r3, #10]
-	RxMessage.Data[0] = 0x00;
- 800203e:	2308      	movs	r3, #8
+	can_rx_msg.Data[0] = 0x00;
+ 800203e:	2320      	movs	r3, #32
  8002040:	18fb      	adds	r3, r7, r3
  8002042:	2200      	movs	r2, #0
  8002044:	72da      	strb	r2, [r3, #11]
-	RxMessage.Data[1] = 0x00;
- 8002046:	2308      	movs	r3, #8
+	can_rx_msg.Data[1] = 0x00;
+ 8002046:	2320      	movs	r3, #32
  8002048:	18fb      	adds	r3, r7, r3
  800204a:	2200      	movs	r2, #0
  800204c:	731a      	strb	r2, [r3, #12]
-	RxMessage.Data[2] = 0x00;
- 800204e:	2308      	movs	r3, #8
+	can_rx_msg.Data[2] = 0x00;
+ 800204e:	2320      	movs	r3, #32
  8002050:	18fb      	adds	r3, r7, r3
  8002052:	2200      	movs	r2, #0
  8002054:	735a      	strb	r2, [r3, #13]
-	RxMessage.Data[3] = 0x00;
- 8002056:	2308      	movs	r3, #8
+	can_rx_msg.Data[3] = 0x00;
+ 8002056:	2320      	movs	r3, #32
  8002058:	18fb      	adds	r3, r7, r3
  800205a:	2200      	movs	r2, #0
  800205c:	739a      	strb	r2, [r3, #14]
-	RxMessage.Data[4] = 0x00;
- 800205e:	2308      	movs	r3, #8
+	can_rx_msg.Data[4] = 0x00;
+ 800205e:	2320      	movs	r3, #32
  8002060:	18fb      	adds	r3, r7, r3
  8002062:	2200      	movs	r2, #0
  8002064:	73da      	strb	r2, [r3, #15]
-	RxMessage.Data[5] = 0x00;
- 8002066:	2308      	movs	r3, #8
+	can_rx_msg.Data[5] = 0x00;
+ 8002066:	2320      	movs	r3, #32
  8002068:	18fb      	adds	r3, r7, r3
  800206a:	2200      	movs	r2, #0
  800206c:	741a      	strb	r2, [r3, #16]
-	RxMessage.Data[6] = 0x00;
- 800206e:	2308      	movs	r3, #8
+	can_rx_msg.Data[6] = 0x00;
+ 800206e:	2320      	movs	r3, #32
  8002070:	18fb      	adds	r3, r7, r3
  8002072:	2200      	movs	r2, #0
  8002074:	745a      	strb	r2, [r3, #17]
-	RxMessage.Data[7] = 0x00;
- 8002076:	2308      	movs	r3, #8
+	can_rx_msg.Data[7] = 0x00;
+ 8002076:	2320      	movs	r3, #32
  8002078:	18fb      	adds	r3, r7, r3
  800207a:	2200      	movs	r2, #0
  800207c:	749a      	strb	r2, [r3, #18]
-	CAN_Receive(CAN, CAN_FIFO0, &RxMessage);
- 800207e:	2308      	movs	r3, #8
+	CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg);
+ 800207e:	2320      	movs	r3, #32
  8002080:	18fb      	adds	r3, r7, r3
  8002082:	4828      	ldr	r0, [pc, #160]	; (8002124 <CEC_CAN_IRQHandler+0x10c>)
  8002084:	001a      	movs	r2, r3
@@ -4999,10 +4999,10 @@ void CEC_CAN_IRQHandler(void)
  8002088:	f7ff fae9 	bl	800165e <CAN_Receive>
 
 	// I2C send buffer
-	uint8_t tx_values[8];
+	uint8_t i2c_tx_msg[32];
 
-	switch (RxMessage.StdId)
- 800208c:	2308      	movs	r3, #8
+	switch (can_rx_msg.StdId)
+ 800208c:	2320      	movs	r3, #32
  800208e:	18fb      	adds	r3, r7, r3
  8002090:	681b      	ldr	r3, [r3, #0]
  8002092:	2b00      	cmp	r3, #0
@@ -5016,8 +5016,8 @@ void CEC_CAN_IRQHandler(void)
 		default:
 			break;
  800209a:	e03e      	b.n	800211a <CEC_CAN_IRQHandler+0x102>
-			switch (RxMessage.Data[1])
- 800209c:	2308      	movs	r3, #8
+			switch (can_rx_msg.Data[1])
+ 800209c:	2320      	movs	r3, #32
  800209e:	18fb      	adds	r3, r7, r3
  80020a0:	7b1b      	ldrb	r3, [r3, #12]
  80020a2:	3b41      	subs	r3, #65	; 0x41
@@ -5028,47 +5028,47 @@ void CEC_CAN_IRQHandler(void)
  80020ac:	18d3      	adds	r3, r2, r3
  80020ae:	681b      	ldr	r3, [r3, #0]
  80020b0:	469f      	mov	pc, r3
-					for (i=1; i<RxMessage.DLC; i++)
- 80020b2:	231f      	movs	r3, #31
+					for (i=1; i<can_rx_msg.DLC; i++)
+ 80020b2:	2337      	movs	r3, #55	; 0x37
  80020b4:	18fb      	adds	r3, r7, r3
  80020b6:	2201      	movs	r2, #1
  80020b8:	701a      	strb	r2, [r3, #0]
  80020ba:	e013      	b.n	80020e4 <CEC_CAN_IRQHandler+0xcc>
-						tx_values[i-1] = RxMessage.Data[i];
- 80020bc:	231f      	movs	r3, #31
+						i2c_tx_msg[i-1] = can_rx_msg.Data[i];
+ 80020bc:	2337      	movs	r3, #55	; 0x37
  80020be:	18fb      	adds	r3, r7, r3
  80020c0:	781b      	ldrb	r3, [r3, #0]
  80020c2:	3b01      	subs	r3, #1
- 80020c4:	221f      	movs	r2, #31
+ 80020c4:	2237      	movs	r2, #55	; 0x37
  80020c6:	18ba      	adds	r2, r7, r2
  80020c8:	7812      	ldrb	r2, [r2, #0]
- 80020ca:	2108      	movs	r1, #8
+ 80020ca:	2120      	movs	r1, #32
  80020cc:	1879      	adds	r1, r7, r1
  80020ce:	188a      	adds	r2, r1, r2
  80020d0:	7ad1      	ldrb	r1, [r2, #11]
  80020d2:	003a      	movs	r2, r7
  80020d4:	54d1      	strb	r1, [r2, r3]
-					for (i=1; i<RxMessage.DLC; i++)
- 80020d6:	231f      	movs	r3, #31
+					for (i=1; i<can_rx_msg.DLC; i++)
+ 80020d6:	2337      	movs	r3, #55	; 0x37
  80020d8:	18fb      	adds	r3, r7, r3
  80020da:	781a      	ldrb	r2, [r3, #0]
- 80020dc:	231f      	movs	r3, #31
+ 80020dc:	2337      	movs	r3, #55	; 0x37
  80020de:	18fb      	adds	r3, r7, r3
  80020e0:	3201      	adds	r2, #1
  80020e2:	701a      	strb	r2, [r3, #0]
- 80020e4:	2308      	movs	r3, #8
+ 80020e4:	2320      	movs	r3, #32
  80020e6:	18fb      	adds	r3, r7, r3
  80020e8:	7a9b      	ldrb	r3, [r3, #10]
- 80020ea:	221f      	movs	r2, #31
+ 80020ea:	2237      	movs	r2, #55	; 0x37
  80020ec:	18ba      	adds	r2, r7, r2
  80020ee:	7812      	ldrb	r2, [r2, #0]
  80020f0:	429a      	cmp	r2, r3
  80020f2:	d3e3      	bcc.n	80020bc <CEC_CAN_IRQHandler+0xa4>
-					I2C_WrReg(RxMessage.Data[0], 0x00, tx_values, RxMessage.DLC - 1);
- 80020f4:	2308      	movs	r3, #8
+					I2C_WrReg(can_rx_msg.Data[0], 0x00, i2c_tx_msg, can_rx_msg.DLC - 1);
+ 80020f4:	2320      	movs	r3, #32
  80020f6:	18fb      	adds	r3, r7, r3
  80020f8:	7ad8      	ldrb	r0, [r3, #11]
- 80020fa:	2308      	movs	r3, #8
+ 80020fa:	2320      	movs	r3, #32
  80020fc:	18fb      	adds	r3, r7, r3
  80020fe:	7a9b      	ldrb	r3, [r3, #10]
  8002100:	b29b      	uxth	r3, r3
@@ -5092,7 +5092,7 @@ void CEC_CAN_IRQHandler(void)
 }
  800211a:	46c0      	nop			; (mov r8, r8)
  800211c:	46bd      	mov	sp, r7
- 800211e:	b008      	add	sp, #32
+ 800211e:	b00e      	add	sp, #56	; 0x38
  8002120:	bd80      	pop	{r7, pc}
  8002122:	46c0      	nop			; (mov r8, r8)
  8002124:	40006400 	.word	0x40006400
@@ -5628,10 +5628,10 @@ int main(void)
  8002478:	af00      	add	r7, sp, #0
 	rccConfiguration();
  800247a:	f000 f92d 	bl	80026d8 <rccConfiguration>
-	DelayMil(10);
- 800247e:	200a      	movs	r0, #10
- 8002480:	f000 f9a0 	bl	80027c4 <DelayMil>
-	//DelaySec(30);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
+	//DelayMil(10);
+	DelaySec(30);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
+ 800247e:	201e      	movs	r0, #30
+ 8002480:	f000 f9b6 	bl	80027f0 <DelaySec>
 					// before J130 starts.
 
 	i2cInit();

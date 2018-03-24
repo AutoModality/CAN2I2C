@@ -2256,21 +2256,21 @@ LOAD c:/program files (x86)/atollic/truestudio for stm32 9.0.0/armtools/bin/../l
                 0x000004ec       0x1e c:/program files (x86)/atollic/truestudio for stm32 9.0.0/armtools/bin/../lib/gcc/arm-atollic-eabi/6.3.1/armv6-m/crtn.o
 OUTPUT(CAN2I2C.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x85df
+.debug_info     0x00000000     0x85ef
  .debug_info    0x00000000      0xb88 Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_can.o
  .debug_info    0x00000b88      0x5f6 Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_gpio.o
  .debug_info    0x0000117e      0xbca Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_i2c.o
  .debug_info    0x00001d48      0x372 Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_misc.o
  .debug_info    0x000020ba      0xa5f Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_rcc.o
  .debug_info    0x00002b19      0xe5d Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_usart.o
- .debug_info    0x00003976     0x14c0 src\can.o
- .debug_info    0x00004e36     0x10cc src\i2c_low.o
- .debug_info    0x00005f02      0x4de src\main.o
- .debug_info    0x000063e0      0x752 src\rcc.o
- .debug_info    0x00006b32       0x88 src\startup_stm32f042x6.o
- .debug_info    0x00006bba      0x11c src\stm32f0xx_it.o
- .debug_info    0x00006cd6      0x308 src\system_stm32f0xx.o
- .debug_info    0x00006fde     0x1601 src\usart.o
+ .debug_info    0x00003976     0x14d0 src\can.o
+ .debug_info    0x00004e46     0x10cc src\i2c_low.o
+ .debug_info    0x00005f12      0x4de src\main.o
+ .debug_info    0x000063f0      0x752 src\rcc.o
+ .debug_info    0x00006b42       0x88 src\startup_stm32f042x6.o
+ .debug_info    0x00006bca      0x11c src\stm32f0xx_it.o
+ .debug_info    0x00006ce6      0x308 src\system_stm32f0xx.o
+ .debug_info    0x00006fee     0x1601 src\usart.o
 
 .debug_abbrev   0x00000000     0x1739
  .debug_abbrev  0x00000000      0x1f5 Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_can.o
@@ -2350,7 +2350,7 @@ OUTPUT(CAN2I2C.elf elf32-littlearm)
  .debug_line    0x00002a20      0x1f6 src\system_stm32f0xx.o
  .debug_line    0x00002c16      0x571 src\usart.o
 
-.debug_str      0x00000000     0x285d
+.debug_str      0x00000000     0x2873
  .debug_str     0x00000000      0x6ef Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_can.o
                                 0x789 (size before relaxing)
  .debug_str     0x000006ef      0x2f1 Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_gpio.o
@@ -2363,19 +2363,19 @@ OUTPUT(CAN2I2C.elf elf32-littlearm)
                                 0x7f3 (size before relaxing)
  .debug_str     0x0000156a      0x6e0 Drivers\STM32F0xx_HAL_Driver\Src\stm32f0xx_usart.o
                                 0x9e0 (size before relaxing)
- .debug_str     0x00001c4a      0x7f6 src\can.o
-                                0xf01 (size before relaxing)
- .debug_str     0x00002440       0x8c src\i2c_low.o
+ .debug_str     0x00001c4a      0x80c src\can.o
+                                0xf17 (size before relaxing)
+ .debug_str     0x00002456       0x8c src\i2c_low.o
                                 0xaff (size before relaxing)
- .debug_str     0x000024cc       0x3e src\main.o
+ .debug_str     0x000024e2       0x3e src\main.o
                                 0x47a (size before relaxing)
- .debug_str     0x0000250a       0xb6 src\rcc.o
+ .debug_str     0x00002520       0xb6 src\rcc.o
                                 0x74e (size before relaxing)
- .debug_str     0x000025c0       0x96 src\stm32f0xx_it.o
+ .debug_str     0x000025d6       0x96 src\stm32f0xx_it.o
                                 0x232 (size before relaxing)
- .debug_str     0x00002656       0x6b src\system_stm32f0xx.o
+ .debug_str     0x0000266c       0x6b src\system_stm32f0xx.o
                                 0x2d2 (size before relaxing)
- .debug_str     0x000026c1      0x19c src\usart.o
+ .debug_str     0x000026d7      0x19c src\usart.o
                                 0xe96 (size before relaxing)
 
 .comment        0x00000000       0x7c
@@ -2588,7 +2588,6 @@ DMA_StructInit                                    Drivers\STM32F0xx_HAL_Driver\S
 DebugMon_Handler                                  src\stm32f0xx_it.o
 Default_Handler                                   src\startup_stm32f042x6.o
 DelayMil                                          src\rcc.o
-                                                  src\main.o
                                                   src\i2c_low.o
 DelaySec                                          src\rcc.o
                                                   src\main.o

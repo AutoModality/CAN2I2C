@@ -192,29 +192,43 @@ void dump_can_message(void) {
 
 void CEC_CAN_IRQHandler(void)
 {
-	CanRxMsg RxMessage;
+	CanRxMsg can_rx_msg;
+	CanTxMsg can_tx_msg;
 	uint8_t i = 0;
 
-	RxMessage.StdId = 0x00;
-	RxMessage.IDE = CAN_ID_STD;
-	RxMessage.DLC = 0;
-	RxMessage.Data[0] = 0x00;
-	RxMessage.Data[1] = 0x00;
-	RxMessage.Data[2] = 0x00;
-	RxMessage.Data[3] = 0x00;
-	RxMessage.Data[4] = 0x00;
-	RxMessage.Data[5] = 0x00;
-	RxMessage.Data[6] = 0x00;
-	RxMessage.Data[7] = 0x00;
-	CAN_Receive(CAN, CAN_FIFO0, &RxMessage);
+	can_rx_msg.StdId = 0x00;
+	can_rx_msg.IDE = CAN_ID_STD;
+	can_rx_msg.DLC = 0;
+	can_rx_msg.Data[0] = 0x00;
+	can_rx_msg.Data[1] = 0x00;
+	can_rx_msg.Data[2] = 0x00;
+	can_rx_msg.Data[3] = 0x00;
+	can_rx_msg.Data[4] = 0x00;
+	can_rx_msg.Data[5] = 0x00;
+	can_rx_msg.Data[6] = 0x00;
+	can_rx_msg.Data[7] = 0x00;
+	CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg);
+
+	can_tx_msg.StdId = 0x00;
+	can_tx_msg.IDE = CAN_ID_STD;
+	can_tx_msg.DLC = 0;
+	can_tx_msg.Data[0] = 0x00;
+	can_tx_msg.Data[1] = 0x00;
+	can_tx_msg.Data[2] = 0x00;
+	can_tx_msg.Data[3] = 0x00;
+	can_tx_msg.Data[4] = 0x00;
+	can_tx_msg.Data[5] = 0x00;
+	can_tx_msg.Data[6] = 0x00;
+	can_tx_msg.Data[7] = 0x00;
 
 	// I2C send buffer
-	uint8_t tx_values[8];
+	uint8_t i2c_tx_msg[32];
+	uint8_t i2c_rx_msg[32];
 
-	switch (RxMessage.StdId)
+	switch (can_rx_msg.StdId)
 	{
 		case 0x00:
-			switch (RxMessage.Data[1])
+			switch (can_rx_msg.Data[1])
 			{
 				case 'n':
 				case 'c':
@@ -229,11 +243,11 @@ void CEC_CAN_IRQHandler(void)
 				case 'L':
 				case 'A':
 				case 'B':
-					for (i=1; i<RxMessage.DLC; i++)
+					for (i = 0; i < can_rx_msg.DLC - 1; i++)
 					{
-						tx_values[i-1] = RxMessage.Data[i];
+						i2c_tx_msg[i] = can_rx_msg.Data[i+1];
 					}
-					I2C_WrReg(RxMessage.Data[0], 0x00, tx_values, RxMessage.DLC - 1);
+					I2C_WrReg(can_rx_msg.Data[0], 0x00, i2c_tx_msg, can_rx_msg.DLC - 1);
 					break;
 				case 'a':
 				case 'Z':
@@ -243,6 +257,18 @@ void CEC_CAN_IRQHandler(void)
 			}
 			break;
 		case 0x01:
+			for (i = 0; i < can_rx_msg.DLC - 1; i++)
+			{
+				i2c_tx_msg[i] = can_rx_msg.Data[i+1];
+			}
+			i2c_tx_msg[i++] = '\r';
+			i2c_tx_msg[i] = '\n';
+
+			I2C_WrReg(can_rx_msg.Data[0], 0x00, i2c_tx_msg, can_rx_msg.DLC + 1);
+
+			can_tx_msg.StdId = can_rx_msg.StdId;
+			can_tx_msg.DLC = 8;
+			I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_tx_msg, i2c_tx_msg.DLC, 1);
 			break;
 		default:
 			break;
