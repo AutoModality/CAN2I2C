@@ -195,6 +195,10 @@ void CEC_CAN_IRQHandler(void)
 	CanRxMsg can_rx_msg;
 	CanTxMsg can_tx_msg;
 	uint8_t i = 0;
+	uint8_t j = 0;
+	uint8_t TransmitMailbox = 0;
+	uint8_t valid_data = 0;
+	uint16_t ret = 0; // return error
 
 	can_rx_msg.StdId = 0x00;
 	can_rx_msg.IDE = CAN_ID_STD;
@@ -257,6 +261,7 @@ void CEC_CAN_IRQHandler(void)
 			}
 			break;
 		case 0x01:
+			// arrange the message to write to i2c
 			for (i = 0; i < can_rx_msg.DLC - 1; i++)
 			{
 				i2c_tx_msg[i] = can_rx_msg.Data[i+1];
@@ -264,11 +269,52 @@ void CEC_CAN_IRQHandler(void)
 			i2c_tx_msg[i++] = '\r';
 			i2c_tx_msg[i] = '\n';
 
+			// write lw20 command to i2c
 			I2C_WrReg(can_rx_msg.Data[0], 0x00, i2c_tx_msg, can_rx_msg.DLC + 1);
 
+			// read lw20 from i2c
+			//ret = I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_rx_msg, 1, 1);
+			I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_rx_msg, 16, 0);
+
+			// arrange the lw20 reading into CAN frame
 			can_tx_msg.StdId = can_rx_msg.StdId;
-			can_tx_msg.DLC = 8;
-			I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_tx_msg, i2c_tx_msg.DLC, 1);
+			can_tx_msg.Data[0] = can_rx_msg.Data[0];
+			for (i = 0; i < 32; i++)
+			{
+				if (!valid_data)
+				{
+					if (i2c_rx_msg[i] == ':')
+					{
+						valid_data = 1;
+					}
+				}
+				else
+				{
+					if (i2c_rx_msg[i] != '\r')
+					{
+						can_tx_msg.Data[j] = i2c_rx_msg[i];
+						j++;
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+			can_tx_msg.DLC = j;
+
+			// Send lw20 reading to TX2 on CAN bus
+			TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+			i = 0;
+			while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  !=  0xFFFF))
+			{
+			  i++;
+			}
+			i = 0;
+			while((CAN_MessagePending(CAN, CAN_FIFO0) < 1) && (i  !=  0xFFFF))
+			{
+			  i++;
+			}
 			break;
 		default:
 			break;

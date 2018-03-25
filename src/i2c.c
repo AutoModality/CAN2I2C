@@ -21,23 +21,23 @@ void read_I2C(mode) {
 		return;
 	} else {
 		if(mode==1) {
-			USART_WriteString("     0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\r\n");
+			//USART_WriteString("     0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F\r\n");
 			for(j=0; j<16; j++) {
-				snprintf(usartStr, 5, "%X0: ", j);
-				USART_WriteString(usartStr);
+				//snprintf(usartStr, 5, "%X0: ", j);
+				//USART_WriteString(usartStr);
 				I2C_RdReg(i2cData.device_address, i2cData.register_address, i2cData.rx_values, 16, 1);
 				for(i=0; i<16; i++){
-					snprintf(usartStr, 5, "%.2X ", i2cData.rx_values[i]);
-					USART_WriteString(usartStr);
+					//snprintf(usartStr, 5, "%.2X ", i2cData.rx_values[i]);
+					//USART_WriteString(usartStr);
 					i2cData.register_address++;
 				}
-				USART_WriteString("\r\n");
+				//USART_WriteString("\r\n");
 			}
 		} else if(mode==2) {
 			I2C_RdReg(i2cData.device_address, i2cData.register_address, i2cData.rx_values, i2cData.number_values, 1);
 			for(i=0; i<i2cData.number_values; i++) {
-				snprintf(usartStr, 40, "reg: 0x%.2X data: 0x%.2X\r\n", i2cData.register_address++, i2cData.rx_values[i]);
-				USART_WriteString(usartStr);
+				//snprintf(usartStr, 40, "reg: 0x%.2X data: 0x%.2X\r\n", i2cData.register_address++, i2cData.rx_values[i]);
+				//USART_WriteString(usartStr);
 			}
 
 		}
