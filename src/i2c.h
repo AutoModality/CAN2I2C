@@ -41,6 +41,7 @@ extern void i2c_wr_byte(uint8_t Addr, uint8_t Reg, uint8_t DataByte);
 extern uint8_t i2c_rd_byte(uint8_t Addr, uint8_t Reg);
 extern uint16_t I2C_WrReg(uint8_t Addr, uint8_t Reg, const uint8_t *Data, uint16_t DCnt);
 extern uint16_t I2C_RdReg(uint8_t Addr, uint8_t Reg, uint8_t *Data, uint8_t DCnt, uint8_t incr);
+extern uint16_t I2C_RdRegLW(uint8_t Addr, uint8_t *Data, uint8_t DCnt);
 extern uint16_t I2C_listDev(uint8_t Addr);
 extern void init_EP9351(void);
 extern void rd_avi(void);

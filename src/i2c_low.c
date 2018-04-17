@@ -105,6 +105,26 @@ uint16_t I2C_RdReg(uint8_t Addr, uint8_t Reg, uint8_t *Data, uint8_t DCnt, uint8
 	return ret;
 }
 
+// Code for reading LW20 for its special timing, Auvidea
+uint16_t I2C_RdRegLW(uint8_t Addr, uint8_t *Data, uint8_t DCnt)
+{
+	Addr = ((Addr<<1)+1);
+	uint16_t ret = 0;
+	int Cnt = 0;
+
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_BUSY) == SET) ;
+	I2C_TransferHandling(EP9351_I2C, Addr, DCnt, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
+	for(Cnt = 0; Cnt<DCnt; Cnt++)
+	{
+		while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_RXNE) == RESET) ;
+		Data[Cnt] = I2C_ReceiveData(EP9351_I2C);
+	}
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_STOPF) == RESET) ;
+	I2C_ClearFlag(EP9351_I2C, I2C_FLAG_STOPF);
+	ret = Data[0];
+	return ret;
+}
+
 /*
  * Routine probes every register of given address
  * returns 0 if true

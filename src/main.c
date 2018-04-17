@@ -45,33 +45,55 @@ int main(void)
 
 	//uint8_t tx_values[256];
 
+	// test LW20
+	//i2cData.tx_values[0] = '?';
+	//i2cData.tx_values[1] = '\r';
+	//i2cData.tx_values[2] = '\n';
+	//I2C_WrReg(0x66, 0x00, i2cData.tx_values, 3);
+	//DelayMil(1000);
+
+	//i2cData.device_address = 0x66;
+    //i2cData.register_address = 0;
+    //i2cData.number_values = 16;
+    //read_I2C(2);
+    //I2C_RdRegLW(0x66, i2cData.rx_values, 16);
+
+//	while(1)
+//	{
+//		i2cData.tx_values[0] = '?';
+//		i2cData.tx_values[1] = 'L';
+//		i2cData.tx_values[2] = 'D';
+//		i2cData.tx_values[3] = '\r';
+//		i2cData.tx_values[4] = '\n';
+//		I2C_WrReg(0x66, 0x00, i2cData.tx_values, 3);
+//		DelayMil(1000);
+//
+//		i2cData.device_address = 0x66;
+//		i2cData.register_address = 0;
+//		i2cData.number_values = 16;
+//		read_I2C(2);
+//		I2C_RdRegLW(0x66, i2cData.rx_values, 16);
+//	}
+
 	// stop blinkm default script
 	i2cData.tx_values[0] = 'o';
 	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 1);
-	DelaySec(5);
+	//DelaySec(5);
 
-	// bring blinkm off
+	// bring blinkm off as the above stop script may stop at any color
 	i2cData.tx_values[0] = 'n';
 	i2cData.tx_values[1] = 0x00;
 	i2cData.tx_values[2] = 0x00;
 	i2cData.tx_values[3] = 0x00;
 	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
-	DelaySec(5);
+	//DelaySec(5);
 
-	// test LW20
-	i2cData.tx_values[0] = '?';
-	i2cData.tx_values[1] = 'P';
-	i2cData.tx_values[2] = 'N';
-	i2cData.tx_values[3] = '\r';
-	i2cData.tx_values[4] = '\n';
-	I2C_WrReg(0x66, 0x00, i2cData.tx_values, 5);
-	DelaySec(5);
-
-	i2cData.device_address = 0x66;
-    i2cData.register_address = 0;
-    i2cData.number_values = 16;
-    //read_I2C(2);
-    I2C_RdReg(0x66, 0x00, i2cData.rx_values, 16, 0);
+	// test read i2c, work fine with incr set to 0, not work with incr set to 1;
+	// restart all to get work with incr set to 0 after set incr set to 1
+	//i2cData.tx_values[0] = 'Z'; //'g'; //'Z'; //'a';
+	//I2C_WrReg(0x09, 0x00, i2cData.tx_values, 1);
+	//DelaySec(5);
+	//I2C_RdReg(0x09, 0x00, i2cData.rx_values, 16, 0);
 
 	while (1)
 	{

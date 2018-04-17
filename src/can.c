@@ -198,7 +198,6 @@ void CEC_CAN_IRQHandler(void)
 	uint8_t j = 0;
 	uint8_t TransmitMailbox = 0;
 	uint8_t valid_data = 0;
-	uint16_t ret = 0; // return error
 
 	can_rx_msg.StdId = 0x00;
 	can_rx_msg.IDE = CAN_ID_STD;
@@ -231,7 +230,7 @@ void CEC_CAN_IRQHandler(void)
 
 	switch (can_rx_msg.StdId)
 	{
-		case 0x00:
+		case 0x00: //BlinkM LED
 			switch (can_rx_msg.Data[1])
 			{
 				case 'n':
@@ -260,7 +259,7 @@ void CEC_CAN_IRQHandler(void)
 					break;
 			}
 			break;
-		case 0x01:
+		case 0x01: // LW20 altimeter
 			// arrange the message to write to i2c
 			for (i = 0; i < can_rx_msg.DLC - 1; i++)
 			{
@@ -274,11 +273,12 @@ void CEC_CAN_IRQHandler(void)
 
 			// read lw20 from i2c
 			//ret = I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_rx_msg, 1, 1);
-			I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_rx_msg, 16, 0);
+			I2C_RdRegLW(can_rx_msg.Data[0], i2c_rx_msg, 16);
 
 			// arrange the lw20 reading into CAN frame
 			can_tx_msg.StdId = can_rx_msg.StdId;
 			can_tx_msg.Data[0] = can_rx_msg.Data[0];
+			j = 1;
 			for (i = 0; i < 32; i++)
 			{
 				if (!valid_data)
@@ -290,7 +290,8 @@ void CEC_CAN_IRQHandler(void)
 				}
 				else
 				{
-					if (i2c_rx_msg[i] != '\r')
+					//if (i2c_rx_msg[i] != '\r') // it is not as said in spec, end with '\r\n'
+					if (i2c_rx_msg[i] != ' ')
 					{
 						can_tx_msg.Data[j] = i2c_rx_msg[i];
 						j++;

@@ -34,7 +34,7 @@ void read_I2C(mode) {
 				//USART_WriteString("\r\n");
 			}
 		} else if(mode==2) {
-			I2C_RdReg(i2cData.device_address, i2cData.register_address, i2cData.rx_values, i2cData.number_values, 1);
+			I2C_RdReg(i2cData.device_address, i2cData.register_address, i2cData.rx_values, i2cData.number_values, 0);
 			for(i=0; i<i2cData.number_values; i++) {
 				//snprintf(usartStr, 40, "reg: 0x%.2X data: 0x%.2X\r\n", i2cData.register_address++, i2cData.rx_values[i]);
 				//USART_WriteString(usartStr);
