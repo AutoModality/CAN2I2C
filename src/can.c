@@ -194,7 +194,7 @@ void CEC_CAN_IRQHandler(void)
 {
 	CanRxMsg can_rx_msg;
 	CanTxMsg can_tx_msg;
-	uint8_t i = 0;
+	uint32_t i = 0;
 	uint8_t j = 0;
 	uint8_t TransmitMailbox = 0;
 	uint8_t valid_data = 0;
@@ -291,7 +291,11 @@ void CEC_CAN_IRQHandler(void)
 				else
 				{
 					//if (i2c_rx_msg[i] != '\r') // it is not as said in spec, end with '\r\n'
-					if (i2c_rx_msg[i] != ' ')
+					//if (i2c_rx_msg[i] != '\r' && i2c_rx_msg[i] != '\n' && i2c_rx_msg[i] != ' ' && i2c_rx_msg[i] != '\t')
+					if ((i2c_rx_msg[i] >= 48 && i2c_rx_msg[i] <= 57)
+							|| (i2c_rx_msg[i] >= 65 && i2c_rx_msg[i] <= 90)
+							|| (i2c_rx_msg[i] >= 97 && i2c_rx_msg[i] <= 122)
+							|| i2c_rx_msg[i] == 46)
 					{
 						can_tx_msg.Data[j] = i2c_rx_msg[i];
 						j++;
@@ -307,12 +311,12 @@ void CEC_CAN_IRQHandler(void)
 			// Send lw20 reading to TX2 on CAN bus
 			TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
 			i = 0;
-			while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  !=  0xFFFF))
+			while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
 			{
 			  i++;
 			}
 			i = 0;
-			while((CAN_MessagePending(CAN, CAN_FIFO0) < 1) && (i  !=  0xFFFF))
+			while((CAN_MessagePending(CAN, CAN_FIFO0) < 1) && (i  <=  0xFFFF))
 			{
 			  i++;
 			}

@@ -29,10 +29,7 @@ int dcount = 0;
 int main(void)
 {
 	rccConfiguration();
-	//DelayMil(10);
-	DelaySec(30);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
-					// before J130 starts.
-
+	DelayMil(10);
 	i2cInit();
 	canInit();
     chipReset();
@@ -40,24 +37,27 @@ int main(void)
 	flashspeed = 1500;
 	ledflash = 1;
 
-	bbInit();
-	i2cInit();
+	DelaySec(1);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
+					// before J130 starts.
+
+	//bbInit();
+	//i2cInit();
 
 	//uint8_t tx_values[256];
 
-	// test LW20
-	//i2cData.tx_values[0] = '?';
-	//i2cData.tx_values[1] = '\r';
-	//i2cData.tx_values[2] = '\n';
-	//I2C_WrReg(0x66, 0x00, i2cData.tx_values, 3);
-	//DelayMil(1000);
-
-	//i2cData.device_address = 0x66;
-    //i2cData.register_address = 0;
-    //i2cData.number_values = 16;
-    //read_I2C(2);
-    //I2C_RdRegLW(0x66, i2cData.rx_values, 16);
-
+//	// test LW20
+//	i2cData.tx_values[0] = '?';
+//	i2cData.tx_values[1] = '\r';
+//	i2cData.tx_values[2] = '\n';
+//	I2C_WrReg(0x66, 0x00, i2cData.tx_values, 3);
+//	DelayMil(1000);
+//
+//	i2cData.device_address = 0x66;
+//    i2cData.register_address = 0;
+//    i2cData.number_values = 16;
+//    //read_I2C(2);
+//    I2C_RdRegLW(0x66, i2cData.rx_values, 16);
+//
 //	while(1)
 //	{
 //		i2cData.tx_values[0] = '?';
@@ -65,20 +65,20 @@ int main(void)
 //		i2cData.tx_values[2] = 'D';
 //		i2cData.tx_values[3] = '\r';
 //		i2cData.tx_values[4] = '\n';
-//		I2C_WrReg(0x66, 0x00, i2cData.tx_values, 3);
+//		I2C_WrReg(0x66, 0x00, i2cData.tx_values, 5);
 //		DelayMil(1000);
 //
 //		i2cData.device_address = 0x66;
 //		i2cData.register_address = 0;
 //		i2cData.number_values = 16;
-//		read_I2C(2);
+//		//read_I2C(2);
 //		I2C_RdRegLW(0x66, i2cData.rx_values, 16);
 //	}
 
 	// stop blinkm default script
 	i2cData.tx_values[0] = 'o';
 	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 1);
-	//DelaySec(5);
+	DelaySec(5);
 
 	// bring blinkm off as the above stop script may stop at any color
 	i2cData.tx_values[0] = 'n';
