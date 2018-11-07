@@ -1,0 +1,5 @@
+rcc.c:15:6:rccConfiguration	16	static
+rcc.c:39:6:SysTick_Handler	8	static
+rcc.c:47:6:DelayMil	8	static
+rcc.c:54:6:DelaySec	8	static
+rcc.c:60:10:timerMilli	0	static

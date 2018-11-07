@@ -11,11 +11,105 @@
 #include <stdio.h>
 
 #include "stm32f0xx_can.h"
+#include "stm32f0xx_misc.h"
+
+#include "vl53l0x_api.h"
+#include "vl53l0x_platform.h"
+
+//extern VL53L0X_Error Status;
+//extern uint8_t *mytest;
+//extern VL53L0X_Dev_t MyDevice;
+//extern VL53L0X_Dev_t *pMyDevice;
+//extern VL53L0X_RangingMeasurementData_t RangingMeasurementData;
 
 void CEC_CAN_IRQHandler(void);
 
 int countCAN = 0;
 char tmpStr[64] = "Send a message via UART\n\r";
+
+VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+VL53L0X_Dev_t MyDevice;
+VL53L0X_Dev_t *pMyDevice = &MyDevice;
+//VL53L0X_Version_t Version;
+//VL53L0X_Version_t *pVersion   = &Version;
+//VL53L0X_DeviceInfo_t DeviceInfo;
+VL53L0X_RangingMeasurementData_t RangingMeasurementData;
+
+VL53L0X_Error rangingTest(VL53L0X_Dev_t *pMyDevice)
+{
+    VL53L0X_Error Status = VL53L0X_ERROR_NONE;
+
+    uint32_t refSpadCount;
+    uint8_t isApertureSpads;
+    uint8_t VhvSettings;
+    uint8_t PhaseCal;
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+		Status = VL53L0X_StaticInit(pMyDevice); // Device Initialization
+		Status = VL53L0X_ERROR_CALIBRATION_WARNING;
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_PerformRefCalibration(pMyDevice, &VhvSettings, &PhaseCal); // Device Initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_PerformRefSpadManagement(pMyDevice, &refSpadCount, &isApertureSpads); // Device Initialization
+    }
+
+    if(Status == VL53L0X_ERROR_NONE)
+    {
+        // no need to do this when we use VL53L0X_PerformSingleRangingMeasurement
+        Status = VL53L0X_SetDeviceMode(pMyDevice, VL53L0X_DEVICEMODE_SINGLE_RANGING); // Setup in single ranging mode
+    }/**/
+
+    // Enable/Disable Sigma and Signal check
+
+ /*   if (Status == VL53L0X_ERROR_NONE) {
+        Status = VL53L0X_SetSequenceStepEnable(pMyDevice,VL53L0X_SEQUENCESTEP_DSS, 1);
+    }*/
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetLimitCheckEnable(pMyDevice, VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, 1);
+    }
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetLimitCheckEnable(pMyDevice, VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, 1);
+    }
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetLimitCheckValue(pMyDevice, VL53L0X_CHECKENABLE_SIGNAL_RATE_FINAL_RANGE, (FixPoint1616_t)(0.1*65536));
+	}
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetLimitCheckValue(pMyDevice, VL53L0X_CHECKENABLE_SIGMA_FINAL_RANGE, (FixPoint1616_t)(60*65536));
+    }
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetMeasurementTimingBudgetMicroSeconds(pMyDevice, 33000);
+	}
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetVcselPulsePeriod(pMyDevice, VL53L0X_VCSEL_PERIOD_PRE_RANGE, 18);
+    }
+
+    if (Status == VL53L0X_ERROR_NONE)
+    {
+        Status = VL53L0X_SetVcselPulsePeriod(pMyDevice, VL53L0X_VCSEL_PERIOD_FINAL_RANGE, 14);
+    }/**/
+
+	//Status = VL53L0X_ERROR_CALIBRATION_WARNING;
+    return Status;
+}
 
 void canInit(void) {
     GPIO_InitTypeDef GPIO_InitStructure;
@@ -86,6 +180,31 @@ void canInit(void) {
 	NVIC_Init(&NVIC_InitStructure);
 
     CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
+
+    // Initialize VL53L0X
+
+	// Initialize I2C address for VL53L0X
+	uint32_t addr = 0x29;
+	pMyDevice->I2cDevAddr = addr;
+
+	if(Status == VL53L0X_ERROR_NONE)
+	{
+		Status = VL53L0X_DataInit(&MyDevice); // Data initialization
+	}
+	else
+	{
+		Status = 22;
+	}
+
+	if(Status == VL53L0X_ERROR_NONE)
+	{
+		//Status = VL53L0X_ERROR_CALIBRATION_WARNING;
+		Status = rangingTest(pMyDevice);
+	}
+	else
+	{
+		Status = 44;// VL53L0X_ERROR_CALIBRATION_WARNING;
+	}
 }
 
 void can_loopback(void) {
@@ -136,8 +255,6 @@ void can_loopback(void) {
 	}
 }
 
-
-
 void send_can_message(uint8_t id, uint8_t dlc, uint8_t * data) {
 	CanTxMsg TxMessage;
 	uint32_t i = 0;
@@ -182,12 +299,12 @@ void dump_can_message(void) {
 	RxMessage.Data[7] = 0x00;
 	CAN_Receive(CAN, CAN_FIFO0, &RxMessage);
 //	snprintf(tmpStr, 63, "%.3x [%i] %.2x", (int)RxMessage.StdId, RxMessage.DLC, RxMessage.Data[0]);
-//	USART_WriteString(tmpStr);
+//	//USART_WriteString(tmpStr);
 //	for(i = 1; i<RxMessage.DLC; i++) {
 //		snprintf(tmpStr, 63, " %.2x",RxMessage.Data[i]);
-//		USART_WriteString(tmpStr);
+//		//USART_WriteString(tmpStr);
 //	}
-//	USART_WriteString("\n\r");
+//	//USART_WriteString("\n\r");
 }
 
 void CEC_CAN_IRQHandler(void)
@@ -320,6 +437,38 @@ void CEC_CAN_IRQHandler(void)
 			{
 			  i++;
 			}
+
+			break;
+		case 0x02: // mmWave
+			break;
+		case 0x03: // vl53l0x
+			//Status = VL53L0X_PerformSingleRangingMeasurement(pMyDevice, &RangingMeasurementData);
+			can_tx_msg.Data[1] = 0x0f;
+			can_tx_msg.Data[2] = 0x00;
+
+			can_tx_msg.StdId = can_rx_msg.StdId;
+			can_tx_msg.Data[0] = can_rx_msg.Data[0];
+			/*if (Status == VL53L0X_ERROR_NONE)
+			{
+				can_tx_msg.Data[1] = RangingMeasurementData.RangeMilliMeter >> 0 & 0xFF;
+				can_tx_msg.Data[2] = RangingMeasurementData.RangeMilliMeter >> 8 & 0xFF;
+			}*/
+			can_tx_msg.Data[3] = Status;
+
+			can_tx_msg.DLC = 4;
+			// Send vl53l0x reading to TX2 on CAN bus
+			TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+			i = 0;
+			while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
+			{
+			  i++;
+			}
+			i = 0;
+			while((CAN_MessagePending(CAN, CAN_FIFO0) < 1) && (i  <=  0xFFFF))
+			{
+			  i++;
+			}
+
 			break;
 		default:
 			break;

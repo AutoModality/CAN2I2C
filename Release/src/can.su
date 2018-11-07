@@ -1,0 +1,6 @@
+can.c:38:15:rangingTest	8	static
+can.c:114:6:canInit	64	static
+can.c:210:6:can_loopback	56	static
+can.c:258:6:send_can_message	40	static
+can.c:285:6:dump_can_message	32	static
+can.c:310:6:CEC_CAN_IRQHandler	128	static

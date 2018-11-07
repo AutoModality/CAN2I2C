@@ -57,7 +57,7 @@ uint16_t I2C_WrReg(uint8_t Addr, uint8_t Reg, const uint8_t *Data, uint16_t DCnt
 	} // missing Data
 	for(Cnt = 0; Cnt<DCnt; Cnt++){
 //		snprintf(usartStr, 30, "Data[%d] = %X\n\r", Cnt ,Data[Cnt]);
-//		USART_WriteString(usartStr);
+//		//USART_WriteString(usartStr);
 		while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TXE) == RESET);
 		I2C_SendData(EP9351_I2C, Data[Cnt]);
 	}

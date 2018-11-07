@@ -1,0 +1,3 @@
+stm32f0xx_misc.c:77:6:NVIC_Init	20	static
+stm32f0xx_misc.c:115:6:NVIC_SystemLPConfig	0	static
+stm32f0xx_misc.c:140:6:SysTick_CLKSourceConfig	0	static

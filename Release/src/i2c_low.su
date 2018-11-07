@@ -1,0 +1,9 @@
+i2c_low.c:16:6:chipReset	8	static
+i2c_low.c:36:10:I2C_WrReg	40	static
+i2c_low.c:24:6:i2c_wr_byte	8	static
+i2c_low.c:71:10:I2C_RdReg	48	static
+i2c_low.c:31:9:i2c_rd_byte	16	static
+i2c_low.c:109:10:I2C_RdRegLW	32	static
+i2c_low.c:132:10:I2C_listDev	24	static
+i2c_low.c:156:6:i2cInit	64	static
+i2c_low.c:214:6:bbInit	16	static

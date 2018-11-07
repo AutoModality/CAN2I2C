@@ -40,7 +40,7 @@ int main(void) {
 	flashspeed = 1500;
 	ledflash = 1;
 
-	USART_WriteString(">");
+	//USART_WriteString(">");
 
 	bbInit();
 	DelaySec(1);
