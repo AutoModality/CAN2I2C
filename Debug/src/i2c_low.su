@@ -6,4 +6,4 @@ i2c_low.c:71:10:I2C_RdReg	48	static
 i2c_low.c:109:10:I2C_RdRegLW	40	static
 i2c_low.c:132:10:I2C_listDev	32	static
 i2c_low.c:156:6:i2cInit	48	static
-i2c_low.c:214:6:bbInit	16	static
+i2c_low.c:218:6:bbInit	16	static

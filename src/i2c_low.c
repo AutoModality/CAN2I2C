@@ -154,6 +154,8 @@ uint16_t I2C_listDev(uint8_t Addr){
 
 //void i2cInit(uint8_t periph) {
 void i2cInit(void) {
+		//I2C_SoftwareResetCmd(EP9351_I2C);
+
 		GPIO_InitTypeDef GPIO_InitStructure;
 		I2C_InitTypeDef I2C_InitStructure;
 
@@ -209,6 +211,8 @@ void i2cInit(void) {
 		I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
 		I2C_Init(EP9351_I2C, &I2C_InitStructure);
 		I2C_Cmd(EP9351_I2C, ENABLE);
+
+		//I2C_ClearFlag(EP9351_I2C, I2C_FLAG_STOPF);
 }
 
 void bbInit(void) {
