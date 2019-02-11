@@ -1,3 +1,0 @@
-i2c.c:12:6:write_I2C	8	static
-i2c.c:16:6:read_I2C	32	static
-i2c.c:47:6:list_I2C	24	static
