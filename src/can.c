@@ -90,7 +90,7 @@ void canInit(void) {
 	//NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	//NVIC_Init(&NVIC_InitStructure);
 
-    CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
+    //CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
 }
 
 void can_loopback(void) {
