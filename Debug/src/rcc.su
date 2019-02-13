@@ -1,7 +1,0 @@
-core_cm0.h:688:22:NVIC_SetPriority	24	static
-core_cm0.h:769:26:SysTick_Config	16	static
-rcc.c:15:6:rccConfiguration	24	static
-rcc.c:39:6:SysTick_Handler	8	static
-rcc.c:47:6:DelayMil	24	static
-rcc.c:54:6:DelaySec	24	static
-rcc.c:60:10:timerMilli	8	static

@@ -1,8 +1,0 @@
-stm32f0xx_syscfg.c:92:6:SYSCFG_DeInit	0	static
-stm32f0xx_syscfg.c:114:6:SYSCFG_MemoryRemapConfig	8	static
-stm32f0xx_syscfg.c:154:6:SYSCFG_DMAChannelRemapConfig	16	static
-stm32f0xx_syscfg.c:198:6:SYSCFG_I2CFastModePlusConfig	16	static
-stm32f0xx_syscfg.c:229:6:SYSCFG_EXTILineConfig	24	static
-stm32f0xx_syscfg.c:253:6:SYSCFG_BreakConfig	8	static
-stm32f0xx_syscfg.c:268:12:SYSCFG_GetFlagStatus	8	static
-stm32f0xx_syscfg.c:297:6:SYSCFG_ClearFlag	8	static
