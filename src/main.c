@@ -110,23 +110,23 @@ int main(void)
 	i2cData.tx_values[2] = 0x00;
 	i2cData.tx_values[3] = 0x00;
 	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
-	//DelaySec(1);
+	DelaySec(1);
 
 	// set blikm to red
-	//i2cData.tx_values[0] = 'n';
-	//i2cData.tx_values[1] = 0xff;
-	//i2cData.tx_values[2] = 0x00;
-	//i2cData.tx_values[3] = 0x00;
-	//I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
-	//DelaySec(1);
+	i2cData.tx_values[0] = 'n';
+	i2cData.tx_values[1] = 0xff;
+	i2cData.tx_values[2] = 0x00;
+	i2cData.tx_values[3] = 0x00;
+	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
+	DelaySec(1);
 
 	// set blikm to green
-	//i2cData.tx_values[0] = 'n';
-	//i2cData.tx_values[1] = 0x00;
-	//i2cData.tx_values[2] = 0xff;
-	//i2cData.tx_values[3] = 0x00;
-	//I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
-	//DelaySec(1);
+	i2cData.tx_values[0] = 'n';
+	i2cData.tx_values[1] = 0x00;
+	i2cData.tx_values[2] = 0xff;
+	i2cData.tx_values[3] = 0x00;
+	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
+	DelaySec(1);
 
 	// set blikm to blue
 	i2cData.tx_values[0] = 'n';
@@ -134,15 +134,15 @@ int main(void)
 	i2cData.tx_values[2] = 0x00;
 	i2cData.tx_values[3] = 0xff;
 	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
-	//DelaySec(1);
+	DelaySec(1);
 
 	// turn off blikm
-	//i2cData.tx_values[0] = 'n';
-	//i2cData.tx_values[1] = 0x00;
-	//i2cData.tx_values[2] = 0x00;
-	//i2cData.tx_values[3] = 0x00;
-	//I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
-	//DelaySec(1);
+	i2cData.tx_values[0] = 'n';
+	i2cData.tx_values[1] = 0x00;
+	i2cData.tx_values[2] = 0x00;
+	i2cData.tx_values[3] = 0x00;
+	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 4);
+	DelaySec(1);
 
 	// test read i2c, work fine with incr set to 0, not work with incr set to 1;
 	// restart all to get work with incr set to 0 after set incr set to 1
@@ -166,7 +166,7 @@ int main(void)
 
 	// Independent Watchdog
 	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-	IWDG_SetPrescaler(IWDG_Prescaler_4);
+	IWDG_SetPrescaler(IWDG_Prescaler_8);
 	while (IWDG_GetFlagStatus(IWDG_FLAG_PVU) == RESET) ;
 	IWDG_SetReload(0xfff);
 	while (IWDG_GetFlagStatus(IWDG_FLAG_RVU) == RESET) ;
@@ -345,7 +345,8 @@ int main(void)
 
 					// Send lw20 reading to TX2 on CAN bus
 					TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
-					i = 0;
+					DelayMil(10);
+					/*i = 0;
 					while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
 					{
 					  i++;
@@ -354,7 +355,7 @@ int main(void)
 					while((CAN_MessagePending(CAN, CAN_FIFO0) < 1) && (i  <=  0xFFFF))
 					{
 					  i++;
-					}
+					}*/
 
 					count_lw20_reading++;
 					//IWDG_ReloadCounter();
@@ -393,7 +394,8 @@ int main(void)
 
 					// Send lw20 reading to TX2 on CAN bus
 					TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
-					i = 0;
+					DelayMil(10);
+					/*i = 0;
 					while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
 					{
 					  i++;
@@ -402,7 +404,7 @@ int main(void)
 					while((CAN_MessagePending(CAN, CAN_FIFO0) < 1) && (i  <=  0xFFFF))
 					{
 					  i++;
-					}
+					}*/
 
 					break;
 				}

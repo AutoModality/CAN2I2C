@@ -26,7 +26,7 @@ void canInit(void) {
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
     CAN_FilterInitTypeDef CAN_FilterInitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    //NVIC_InitTypeDef NVIC_InitStructure;
 
     /* Enable GPIO clock */
     RCC_AHBPeriphClockCmd(CAN_GPIO_CLK, ENABLE);
@@ -90,7 +90,7 @@ void canInit(void) {
 	//NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
 	//NVIC_Init(&NVIC_InitStructure);
 
-    CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
+    //CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
 }
 
 void can_loopback(void) {
