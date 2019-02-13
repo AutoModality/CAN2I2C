@@ -19,14 +19,14 @@ char tmpStr[64] = "Send a message via UART\n\r";
 
 //extern uint8_t watchdog;
 
-//extern CanRxMsg can_rx_msg;
-//extern uint8_t CAN_received;
+extern CanRxMsg can_rx_msg_;
+extern uint8_t CAN_received;
 
 void canInit(void) {
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
     CAN_FilterInitTypeDef CAN_FilterInitStructure;
-    //NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;
 
     /* Enable GPIO clock */
     RCC_AHBPeriphClockCmd(CAN_GPIO_CLK, ENABLE);
@@ -55,7 +55,7 @@ void canInit(void) {
     CAN_InitStructure.CAN_ABOM = DISABLE;
     CAN_InitStructure.CAN_AWUM = DISABLE;
     CAN_InitStructure.CAN_NART = DISABLE;
-    CAN_InitStructure.CAN_RFLM = DISABLE;
+    CAN_InitStructure.CAN_RFLM = ENABLE;
     CAN_InitStructure.CAN_TXFP = DISABLE;
     CAN_InitStructure.CAN_Mode = CAN_Mode_Normal;
     CAN_InitStructure.CAN_SJW = CAN_SJW_1tq;
@@ -85,12 +85,12 @@ void canInit(void) {
     CAN_FilterInit(&CAN_FilterInitStructure);
 
     /* Enable CAN IRQ on message pending */
-	//NVIC_InitStructure.NVIC_IRQChannel = CEC_CAN_IRQn;
-	//NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
-	//NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	//NVIC_Init(&NVIC_InitStructure);
+	NVIC_InitStructure.NVIC_IRQChannel = CEC_CAN_IRQn;
+	NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	NVIC_Init(&NVIC_InitStructure);
 
-    //CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
+    CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
 }
 
 void can_loopback(void) {
@@ -195,20 +195,20 @@ void dump_can_message(void) {
 //	USART_WriteString("\n\r");
 }
 
-//void CEC_CAN_IRQHandler(void)
-//{
-//	can_rx_msg.StdId = 0x00;
-//	can_rx_msg.IDE = CAN_ID_STD;
-//	can_rx_msg.DLC = 0;
-//	can_rx_msg.Data[0] = 0x00;
-//	can_rx_msg.Data[1] = 0x00;
-//	can_rx_msg.Data[2] = 0x00;
-//	can_rx_msg.Data[3] = 0x00;
-//	can_rx_msg.Data[4] = 0x00;
-//	can_rx_msg.Data[5] = 0x00;
-//	can_rx_msg.Data[6] = 0x00;
-//	can_rx_msg.Data[7] = 0x00;
-//	CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg);
-//
-//	CAN_received++;
-//}
+void CEC_CAN_IRQHandler(void)
+{
+	can_rx_msg_.StdId = 0x00;
+	can_rx_msg_.IDE = CAN_ID_STD;
+	can_rx_msg_.DLC = 0;
+	can_rx_msg_.Data[0] = 0x00;
+	can_rx_msg_.Data[1] = 0x00;
+	can_rx_msg_.Data[2] = 0x00;
+	can_rx_msg_.Data[3] = 0x00;
+	can_rx_msg_.Data[4] = 0x00;
+	can_rx_msg_.Data[5] = 0x00;
+	can_rx_msg_.Data[6] = 0x00;
+	can_rx_msg_.Data[7] = 0x00;
+	CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg_);
+
+	CAN_received = 1;
+}

@@ -33,8 +33,8 @@ uint8_t canmode = 1; //canmode = 0 loopback; canmode >= 1 normal
 extern volatile uint32_t Milliseconds;
 extern volatile uint32_t Seconds;
 
-//CanRxMsg can_rx_msg;
-//uint8_t CAN_received = 0;
+CanRxMsg can_rx_msg_;
+uint8_t CAN_received = 0;
 
 //void WWDG_Set_Counter(uint8_t cnt)
 //{
@@ -225,24 +225,28 @@ int main(void)
 		}
 		//WWDG_SetCounter(0x7f);
 
-		//if(CAN_received)
-		if(CAN_MessagePending(CAN, CAN_FIFO0) > 0)
+		if(CAN_received)
+		//if(CAN_MessagePending(CAN, CAN_FIFO0) > 0)
 		{
+//			CanRxMsg can_rx_msg;
+//
+//			can_rx_msg.StdId = 0x00;
+//			can_rx_msg.IDE = CAN_ID_STD;
+//			can_rx_msg.DLC = 0;
+//			can_rx_msg.Data[0] = 0x00;
+//			can_rx_msg.Data[1] = 0x00;
+//			can_rx_msg.Data[2] = 0x00;
+//			can_rx_msg.Data[3] = 0x00;
+//			can_rx_msg.Data[4] = 0x00;
+//			can_rx_msg.Data[5] = 0x00;
+//			can_rx_msg.Data[6] = 0x00;
+//			can_rx_msg.Data[7] = 0x00;
+//			CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg);
+
 			CanRxMsg can_rx_msg;
-
-			can_rx_msg.StdId = 0x00;
-			can_rx_msg.IDE = CAN_ID_STD;
-			can_rx_msg.DLC = 0;
-			can_rx_msg.Data[0] = 0x00;
-			can_rx_msg.Data[1] = 0x00;
-			can_rx_msg.Data[2] = 0x00;
-			can_rx_msg.Data[3] = 0x00;
-			can_rx_msg.Data[4] = 0x00;
-			can_rx_msg.Data[5] = 0x00;
-			can_rx_msg.Data[6] = 0x00;
-			can_rx_msg.Data[7] = 0x00;
-			CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg);
-
+			//__disable_irq();
+			can_rx_msg = can_rx_msg_;
+			//__enable_irq();
 			switch (can_rx_msg.StdId)
 			{
 				case 0x00: //BlinkM LED
@@ -262,6 +266,7 @@ int main(void)
 						case 'L':
 						case 'A':
 						case 'B':
+						{
 							for (uint8_t i = 0; i < can_rx_msg.DLC - 1; i++)
 							{
 								//i2c_tx_msg[i] = can_rx_msg.Data[i+1];
@@ -269,11 +274,15 @@ int main(void)
 							}
 							I2C_WrReg(can_rx_msg.Data[0], 0x00, i2cData.tx_values, can_rx_msg.DLC - 1);
 							break;
+						}
 						case 'a':
 						case 'Z':
 						case 'R':
 						case 'g':
+						default:
+						{
 							break;
+						}
 					}
 					break;
 				}
@@ -284,7 +293,7 @@ int main(void)
 
 					uint8_t i = 0;
 					uint8_t j = 0;
-					uint8_t TransmitMailbox = 0;
+					//uint8_t TransmitMailbox = 0;
 					uint8_t valid_data = 0;
 
 					CanTxMsg can_tx_msg;
@@ -344,7 +353,8 @@ int main(void)
 					can_tx_msg.DLC = j;
 
 					// Send lw20 reading to TX2 on CAN bus
-					TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					//TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					CAN_Transmit(CAN, &can_tx_msg);
 					DelayMil(10);
 					/*i = 0;
 					while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
@@ -375,8 +385,8 @@ int main(void)
 					Milliseconds_old_hb = Milliseconds;
 					//hb = Milliseconds;
 
-					uint8_t i = 0;
-					uint8_t TransmitMailbox = 0;
+					//uint8_t i = 0;
+					//uint8_t TransmitMailbox = 0;
 
 					CanTxMsg can_tx_msg;
 					can_tx_msg.RTR = CAN_RTR_DATA;
@@ -393,7 +403,8 @@ int main(void)
 					can_tx_msg.Data[7] = (count_lw20_reading >> 24) & 0xff;
 
 					// Send lw20 reading to TX2 on CAN bus
-					TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					//TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					CAN_Transmit(CAN, &can_tx_msg);
 					DelayMil(10);
 					/*i = 0;
 					while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
@@ -414,7 +425,9 @@ int main(void)
 				}
 			}//switch on CAN id
 
-			//CAN_received = 0;
+			//__disable_irq();
+			CAN_received = 0;
+			//__enable_irq();
 		}//if(CAN_received)
 
 		IWDG_ReloadCounter();
