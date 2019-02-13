@@ -36,10 +36,16 @@ uint8_t i2c_rd_byte(uint8_t Addr, uint8_t Reg) {
 uint16_t I2C_WrReg(uint8_t Addr, uint8_t Reg, const uint8_t *Data, uint16_t DCnt) {
 	Addr = (Addr<<1);
 	uint16_t Cnt = 0;
-	uint16_t i = 0;
 
-	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_BUSY) == SET);
+	uint16_t i = 0;
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_BUSY) == SET) {
+		i++;
+		if(i == I2C_TIMEOUT) {
+			return errorState = BAD_VALUE;
+		}
+	}
 	I2C_TransferHandling(EP9351_I2C, Addr, 1, I2C_Reload_Mode, I2C_Generate_Start_Write);
+	i = 0;
 	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TXIS) == RESET) {
 		i++;
 		if(i == I2C_TIMEOUT) {
@@ -47,8 +53,15 @@ uint16_t I2C_WrReg(uint8_t Addr, uint8_t Reg, const uint8_t *Data, uint16_t DCnt
 		}
 	}
 	I2C_SendData(EP9351_I2C, Reg);
-	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TCR) == RESET);
+	i = 0;
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TCR) == RESET) {
+		i++;
+		if(i == I2C_TIMEOUT) {
+			return errorState = BAD_VALUE;
+		}
+	}
 	I2C_TransferHandling(EP9351_I2C, Addr, DCnt, I2C_AutoEnd_Mode, I2C_No_StartStop);
+	i = 0;
 	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TXIS) == RESET) {
 		i++;
 		if(i == I2C_TIMEOUT) {
@@ -58,10 +71,22 @@ uint16_t I2C_WrReg(uint8_t Addr, uint8_t Reg, const uint8_t *Data, uint16_t DCnt
 	for(Cnt = 0; Cnt<DCnt; Cnt++){
 //		snprintf(usartStr, 30, "Data[%d] = %X\n\r", Cnt ,Data[Cnt]);
 //		USART_WriteString(usartStr);
-		while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TXE) == RESET);
+		i = 0;
+		while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_TXE) == RESET) {
+			i++;
+			if(i == I2C_TIMEOUT) {
+				return errorState = BAD_VALUE;
+			}
+		}
 		I2C_SendData(EP9351_I2C, Data[Cnt]);
 	}
-	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_STOPF) == RESET);
+	i = 0;
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_STOPF) == RESET) {
+		i++;
+		if(i == I2C_TIMEOUT) {
+			return errorState = BAD_VALUE;
+		}
+	}
 	I2C_ClearFlag(EP9351_I2C, I2C_FLAG_STOPF);
 
 	return 0;
@@ -109,20 +134,39 @@ uint16_t I2C_RdReg(uint8_t Addr, uint8_t Reg, uint8_t *Data, uint8_t DCnt, uint8
 uint16_t I2C_RdRegLW(uint8_t Addr, uint8_t *Data, uint8_t DCnt)
 {
 	Addr = ((Addr<<1)+1);
-	uint16_t ret = 0;
+	//uint16_t ret = 0;
 	int Cnt = 0;
 
-	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_BUSY) == SET) ;
+	uint16_t i = 0;
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_BUSY) == SET) {
+		i++;
+		if(i == I2C_TIMEOUT) {
+			return errorState = BAD_VALUE;
+		}
+	}
 	I2C_TransferHandling(EP9351_I2C, Addr, DCnt, I2C_AutoEnd_Mode, I2C_Generate_Start_Read);
 	for(Cnt = 0; Cnt<DCnt; Cnt++)
 	{
-		while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_RXNE) == RESET) ;
+		i = 0;
+		while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_RXNE) == RESET) {
+			i++;
+			if(i == I2C_TIMEOUT) {
+				return errorState = BAD_VALUE;
+			}
+		}
 		Data[Cnt] = I2C_ReceiveData(EP9351_I2C);
 	}
-	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_STOPF) == RESET) ;
+	i = 0;
+	while(I2C_GetFlagStatus(EP9351_I2C, I2C_FLAG_STOPF) == RESET) {
+		i++;
+		if(i == I2C_TIMEOUT) {
+			return errorState = BAD_VALUE;
+		}
+	}
 	I2C_ClearFlag(EP9351_I2C, I2C_FLAG_STOPF);
-	ret = Data[0];
-	return ret;
+	//ret = Data[0];
+
+	return 0;
 }
 
 /*

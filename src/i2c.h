@@ -18,7 +18,7 @@
 #define EP9351_SCL_PS GPIO_PinSource10
 #define EP9351_PIN_AF GPIO_AF_1
 #define EP9351_I2C I2C1
-#define I2C_TIMEOUT 1000
+#define I2C_TIMEOUT 10000
 
 #define HDMI_IN			((uint8_t)0x3C)
 #define EP9351_ADDR		((uint8_t)0x3C)
