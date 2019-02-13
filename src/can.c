@@ -80,10 +80,10 @@ void canInit(void) {
     CAN_FilterInit(&CAN_FilterInitStructure);
 
     /* Enable CAN IRQ on message pending */
-	NVIC_InitStructure.NVIC_IRQChannel = CEC_CAN_IRQn;
-	NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
-	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
-	NVIC_Init(&NVIC_InitStructure);
+	//NVIC_InitStructure.NVIC_IRQChannel = CEC_CAN_IRQn;
+	//NVIC_InitStructure.NVIC_IRQChannelPriority = 0;
+	//NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+	//NVIC_Init(&NVIC_InitStructure);
 
     //CAN_ITConfig(CAN_CAN, CAN_IT_FMP0, ENABLE); // Enable CAN message pending Interrupt
 }

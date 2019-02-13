@@ -1,30 +1,51 @@
 /**
 *****************************************************************************
 **
-**  PROJECT      : CAN2UART
+**  PROJECT      : CAN2I2C
 **
-**  AUTHOR		 : Daniel Wahl + Florian Dederichs
+**  AUTHOR		 : Automodality
 **
 **  Environment  : Atollic TrueSTUDIO(R)
 **
-**  COPYRIGHT(C) : 2017 Auvidea GmbH
+**  COPYRIGHT(C) : Automodality
 **
 *****************************************************************************
 **/
-
-
-
 #include "rcc.h"
 #include "usart.h"
 #include "i2c.h"
 #include "can.h"
 
-uint16_t flashspeed, ledflash, flsdelay;
+#include "stm32f0xx_can.h"
 
-uint8_t canmode = 1;					//canmode = 0 loopback 			canmode >= 1 normal
+//uint16_t flashspeed, flsdelay;
+uint16_t ledflash;
+//uint8_t watchdog = 0;
 
-int ncount = 0;
-int dcount = 0;
+uint8_t canmode = 1; //canmode = 0 loopback; canmode >= 1 normal
+
+//int ncount = 0;
+//int dcount = 0;
+
+extern volatile uint32_t Milliseconds;
+extern volatile uint32_t Seconds;
+
+//CanRxMsg can_rx_msg;
+//uint8_t CAN_received = 0;
+
+//void WWDG_Set_Counter(uint8_t cnt)
+//{
+//	WWDG_Enable(cnt);
+//}
+
+//void TIM2_IRQHandler(void)
+//{}
+
+//void WWDG_IRQHandler(void)
+//{
+//	WWDG_Set_Counter(0x7f);
+//	WWDG_ClearFlag();
+//}
 
 int main(void)
 {
@@ -33,22 +54,52 @@ int main(void)
 	i2cInit();
 	canInit();
     chipReset();
-	flsdelay = 2000;
-	flashspeed = 1500;
-	ledflash = 1;
+	//flsdelay = 2000;
+	//flashspeed = 1500;
+	//ledflash = 1;
 
 	DelaySec(1);	// Adjust this delay to the start of J130, it cannot initialize the CAN bus
 					// before J130 starts.
 
 	//bbInit();
 	//i2cInit();
+
+	//uint8_t tx_values[256];
+
+//	// test LW20
+//	i2cData.tx_values[0] = '?';
+//	i2cData.tx_values[1] = '\r';
+//	i2cData.tx_values[2] = '\n';
+//	I2C_WrReg(0x66, 0x00, i2cData.tx_values, 3);
+//	DelayMil(1000);
+//
+//	i2cData.device_address = 0x66;
+//    i2cData.register_address = 0;
+//    i2cData.number_values = 16;
+//    //read_I2C(2);
+//    I2C_RdRegLW(0x66, i2cData.rx_values, 16);
+//
+//	while(1)
+//	{
+//		i2cData.tx_values[0] = '?';
+//		i2cData.tx_values[1] = 'L';
+//		i2cData.tx_values[2] = 'D';
+//		i2cData.tx_values[3] = '\r';
+//		i2cData.tx_values[4] = '\n';
+//		I2C_WrReg(0x66, 0x00, i2cData.tx_values, 5);
+//		DelayMil(1000);
+//
+//		i2cData.device_address = 0x66;
+//		i2cData.register_address = 0;
+//		i2cData.number_values = 16;
+//		//read_I2C(2);
 //		I2C_RdRegLW(0x66, i2cData.rx_values, 16);
 //	}
 
 	// stop blinkm default script
 	i2cData.tx_values[0] = 'o';
 	I2C_WrReg(0x09, 0x00, i2cData.tx_values, 1);
-	DelaySec(5);
+	//DelaySec(1);
 
 	// bring blinkm off as the above stop script may stop at any color
 	i2cData.tx_values[0] = 'n';
@@ -125,30 +176,55 @@ int main(void)
 
 	while (1)
 	{
-		if(ledflash == 1)
+//		if(ledflash == 1)
+//		{
+//			if(ncount != flashspeed)
+//			{
+//				GPIO_SetBits(GPIOB, GPIO_Pin_5);
+//				ncount++;
+//			}
+//			if(ncount == flashspeed)
+//			{
+//					dcount++;
+//					GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+//			}
+//			if(dcount == flsdelay)
+//			{
+//				ncount = 0;
+//				dcount = 0;
+//			}
+//		}
+//		else if(ledflash == 0)
+//		{
+//			ncount = 0;
+//			dcount = 0;
+//		}
+
+		if (Milliseconds - Milliseconds_old > 1000)
 		{
-			if(ncount != flashspeed)
+			if (ledflash == 1)
 			{
 				GPIO_SetBits(GPIOB, GPIO_Pin_5);
-				ncount++;
+				ledflash = 0;
 			}
-			if(ncount == flashspeed)
+			else if(ledflash == 0)
 			{
-					dcount++;
-					GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+				GPIO_ResetBits(GPIOB, GPIO_Pin_5);
+				ledflash = 1;
 			}
-			if(dcount == flsdelay)
-			{
-				ncount = 0;
-				dcount = 0;
-			}
+
+			Milliseconds_old = Milliseconds;
+			//if(watchdog)
+			//{
+			//	Reset_Handler();
+			//}
+			//IWDG_ReloadCounter();
 		}
-		else if(ledflash == 0)
+		//WWDG_SetCounter(0x7f);
+
+		//if(CAN_received)
+		if(CAN_MessagePending(CAN, CAN_FIFO0) > 0)
 		{
-			ncount = 0;
-			dcount = 0;
-		}
-	}
 			CanRxMsg can_rx_msg;
 
 			can_rx_msg.StdId = 0x00;
