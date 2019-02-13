@@ -17,11 +17,6 @@ void CEC_CAN_IRQHandler(void);
 int countCAN = 0;
 char tmpStr[64] = "Send a message via UART\n\r";
 
-//extern uint8_t watchdog;
-
-extern CanRxMsg can_rx_msg_;
-extern uint8_t CAN_received;
-
 void canInit(void) {
     GPIO_InitTypeDef GPIO_InitStructure;
     CAN_InitTypeDef CAN_InitStructure;
@@ -197,18 +192,46 @@ void dump_can_message(void) {
 
 void CEC_CAN_IRQHandler(void)
 {
-	can_rx_msg_.StdId = 0x00;
-	can_rx_msg_.IDE = CAN_ID_STD;
-	can_rx_msg_.DLC = 0;
-	can_rx_msg_.Data[0] = 0x00;
-	can_rx_msg_.Data[1] = 0x00;
-	can_rx_msg_.Data[2] = 0x00;
-	can_rx_msg_.Data[3] = 0x00;
-	can_rx_msg_.Data[4] = 0x00;
-	can_rx_msg_.Data[5] = 0x00;
-	can_rx_msg_.Data[6] = 0x00;
-	can_rx_msg_.Data[7] = 0x00;
-	CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg_);
+	CanRxMsg can_rx_msg;
+	can_rx_msg.StdId = 0x00;
+	can_rx_msg.IDE = CAN_ID_STD;
+	can_rx_msg.DLC = 0;
+	can_rx_msg.Data[0] = 0x00;
+	can_rx_msg.Data[1] = 0x00;
+	can_rx_msg.Data[2] = 0x00;
+	can_rx_msg.Data[3] = 0x00;
+	can_rx_msg.Data[4] = 0x00;
+	can_rx_msg.Data[5] = 0x00;
+	can_rx_msg.Data[6] = 0x00;
+	can_rx_msg.Data[7] = 0x00;
+	CAN_Receive(CAN, CAN_FIFO0, &can_rx_msg);
 
-	CAN_received = 1;
+	switch (can_rx_msg.StdId)
+	{
+		case 0x00: //BlinkM LED
+		{
+			switch (can_rx_msg.Data[1])
+			{
+				case 'B':
+				{
+					for (uint8_t i = 0; i < can_rx_msg.DLC - 1; i++)
+					{
+						//i2c_tx_msg[i] = can_rx_msg.Data[i+1];
+						i2cData.tx_values[i] = can_rx_msg.Data[i+1];
+					}
+					I2C_WrReg(can_rx_msg.Data[0], 0x00, i2cData.tx_values, can_rx_msg.DLC - 1);
+					break;
+				}
+				default:
+				{
+					break;
+				}
+			}
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}//switch on CAN id
 }
