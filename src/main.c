@@ -166,7 +166,7 @@ int main(void)
 
 	// Independent Watchdog
 	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-	IWDG_SetPrescaler(IWDG_Prescaler_8);
+	IWDG_SetPrescaler(IWDG_Prescaler_16);
 	while (IWDG_GetFlagStatus(IWDG_FLAG_PVU) == RESET) ;
 	IWDG_SetReload(0xfff);
 	while (IWDG_GetFlagStatus(IWDG_FLAG_RVU) == RESET) ;
@@ -262,6 +262,7 @@ int main(void)
 						case 'L':
 						case 'A':
 						case 'B':
+						{
 							for (uint8_t i = 0; i < can_rx_msg.DLC - 1; i++)
 							{
 								//i2c_tx_msg[i] = can_rx_msg.Data[i+1];
@@ -269,6 +270,7 @@ int main(void)
 							}
 							I2C_WrReg(can_rx_msg.Data[0], 0x00, i2cData.tx_values, can_rx_msg.DLC - 1);
 							break;
+						}
 						case 'a':
 						case 'Z':
 						case 'R':
@@ -284,7 +286,7 @@ int main(void)
 
 					uint8_t i = 0;
 					uint8_t j = 0;
-					uint8_t TransmitMailbox = 0;
+					//uint8_t TransmitMailbox = 0;
 					uint8_t valid_data = 0;
 
 					CanTxMsg can_tx_msg;
@@ -344,7 +346,8 @@ int main(void)
 					can_tx_msg.DLC = j;
 
 					// Send lw20 reading to TX2 on CAN bus
-					TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					//TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					CAN_Transmit(CAN, &can_tx_msg);
 					DelayMil(10);
 					/*i = 0;
 					while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
@@ -375,8 +378,8 @@ int main(void)
 					Milliseconds_old_hb = Milliseconds;
 					//hb = Milliseconds;
 
-					uint8_t i = 0;
-					uint8_t TransmitMailbox = 0;
+					//uint8_t i = 0;
+					//uint8_t TransmitMailbox = 0;
 
 					CanTxMsg can_tx_msg;
 					can_tx_msg.RTR = CAN_RTR_DATA;
@@ -393,7 +396,8 @@ int main(void)
 					can_tx_msg.Data[7] = (count_lw20_reading >> 24) & 0xff;
 
 					// Send lw20 reading to TX2 on CAN bus
-					TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					//TransmitMailbox = CAN_Transmit(CAN, &can_tx_msg);
+					CAN_Transmit(CAN, &can_tx_msg);
 					DelayMil(10);
 					/*i = 0;
 					while((CAN_TransmitStatus(CAN, TransmitMailbox)  !=  CANTXOK) && (i  <=  0xFFFF))
