@@ -87,9 +87,9 @@ int main(void)
 
 	// Independent Watchdog
 	IWDG_WriteAccessCmd(IWDG_WriteAccess_Enable);
-	IWDG_SetPrescaler(IWDG_Prescaler_16);
+	IWDG_SetPrescaler(IWDG_Prescaler_4);
 	while (IWDG_GetFlagStatus(IWDG_FLAG_PVU) == RESET) ;
-	IWDG_SetReload(0xfff);
+	IWDG_SetReload(0x3ff);
 	while (IWDG_GetFlagStatus(IWDG_FLAG_RVU) == RESET) ;
 	IWDG_Enable();
 
@@ -120,12 +120,6 @@ int main(void)
 		i2cData.tx_values[3] = '\r';
 		i2cData.tx_values[4] = '\n';
 
-		// write lw20 command to i2c
-		I2C_WrReg(LW20_I2C_ADDR, 0x00, i2cData.tx_values, 5);
-
-		// read lw20 from i2c
-		I2C_RdRegLW(LW20_I2C_ADDR, i2cData.rx_values, 16);
-
 		// send LW20 reading to CAN
 		uint8_t i = 0;
 		uint8_t j = 0;
@@ -138,38 +132,68 @@ int main(void)
 		// arrange the lw20 reading into CAN frame
 		can_tx_msg.StdId = 0x01;
 		can_tx_msg.Data[0] = LW20_I2C_ADDR;
-		j = 1;
-		for (i = 0; i < 16; i++)
+		// write lw20 command to i2c
+		if(!I2C_WrReg(LW20_I2C_ADDR, 0x00, i2cData.tx_values, 0x05))
 		{
-			if (!valid_data)
+			// read lw20 from i2c
+			//ret = I2C_RdReg(can_rx_msg.Data[0], 0x00, i2c_rx_msg, 1, 1);
+			if(!I2C_RdRegLW(LW20_I2C_ADDR, i2cData.rx_values, 16))
 			{
-				//if (i2c_rx_msg[i] == ':')
-				if (i2cData.rx_values[i] == ':')
+				j = 1;
+				for (i = 0; i < 16; i++)
 				{
-					valid_data = 1;
+					if (!valid_data)
+					{
+						//if (i2c_rx_msg[i] == ':')
+						if (i2cData.rx_values[i] == ':')
+						{
+							valid_data = 1;
+						}
+					}
+					else
+					{
+						//if (i2c_rx_msg[i] != '\r') // it is not as said in spec, end with '\r\n'
+						//if (i2c_rx_msg[i] != '\r' && i2c_rx_msg[i] != '\n' && i2c_rx_msg[i] != ' ' && i2c_rx_msg[i] != '\t')
+						if ((i2cData.rx_values[i] >= 48 && i2cData.rx_values[i] <= 57)
+								|| (i2cData.rx_values[i] >= 65 && i2cData.rx_values[i] <= 90)
+								|| (i2cData.rx_values[i] >= 97 && i2cData.rx_values[i] <= 122)
+								|| i2cData.rx_values[i] == 46)
+						{
+							can_tx_msg.Data[j] = i2cData.rx_values[i];
+							j++;
+						}
+						else
+						{
+							break;
+						}
+					}
 				}
+				can_tx_msg.DLC = j;
 			}
 			else
 			{
-				if ((i2cData.rx_values[i] >= 48 && i2cData.rx_values[i] <= 57)
-						|| (i2cData.rx_values[i] >= 65 && i2cData.rx_values[i] <= 90)
-						|| (i2cData.rx_values[i] >= 97 && i2cData.rx_values[i] <= 122)
-						|| i2cData.rx_values[i] == 46)
-				{
-					can_tx_msg.Data[j] = i2cData.rx_values[i];
-					j++;
-				}
-				else
-				{
-					break;
-				}
+				can_tx_msg.Data[1] = '-';
+				can_tx_msg.Data[2] = '1';
+				can_tx_msg.DLC = 3;
+
+				//i2cInit();
 			}
 		}
-		can_tx_msg.DLC = j;
+		else
+		{
+			can_tx_msg.Data[1] = '-';
+			can_tx_msg.Data[2] = '1';
+			can_tx_msg.DLC = 3;
+
+			//i2cInit();
+		}
+		//i2cInit();
+		I2C_SoftwareResetCmd(EP9351_I2C); // reset (45hz without heartbeat) is faster than re-init (43hz without heartbeat)
 
 		// Send lw20 reading to TX2 on CAN bus
 		CAN_Transmit(CAN, &can_tx_msg);
-		DelayMil(10);
+		DelayMil(25); // keep this delay bigger than TX2 timer for LW20, it seems some of the
+					  // I2C and CAN hardware operation disable the interrupts
 
 		IWDG_ReloadCounter();
 	} //while

@@ -212,6 +212,18 @@ void CEC_CAN_IRQHandler(void)
 		{
 			switch (can_rx_msg.Data[1])
 			{
+				case 'n':
+				case 'c':
+				case 'h':
+				case 'C':
+				case 'H':
+				case 'p':
+				case 'o':
+				case 'f':
+				case 't':
+				case 'W':
+				case 'L':
+				case 'A':
 				case 'B':
 				{
 					for (uint8_t i = 0; i < can_rx_msg.DLC - 1; i++)
@@ -222,6 +234,10 @@ void CEC_CAN_IRQHandler(void)
 					I2C_WrReg(can_rx_msg.Data[0], 0x00, i2cData.tx_values, can_rx_msg.DLC - 1);
 					break;
 				}
+				case 'a':
+				case 'Z':
+				case 'R':
+				case 'g':
 				default:
 				{
 					break;
